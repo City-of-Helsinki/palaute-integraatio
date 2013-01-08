@@ -197,9 +197,11 @@
 				</xs:annotation>
 				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:element name="name" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
-					<xs:element minOccurs="0" name="phone" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
-					<xs:element minOccurs="0" name="email" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
-					<xs:element minOccurs="0" name="contactAddress" type="types:AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element name="username" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element name="role" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element name="phone" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element name="email" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element name="contactAddress" minOccurs="0" type="types:AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 				</xs:all>
 		</xs:complexType>
 		<xs:complexType name="AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
