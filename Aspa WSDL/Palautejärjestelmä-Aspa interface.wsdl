@@ -262,14 +262,17 @@
 		</xs:complexType>
 		<xs:complexType name="ActivityType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Activity (valmistelu, toimenpide) object
-			</xs:documentation>
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					Activity around the initiative (valmistelu, toimenpide, saateviesti, vastaus, välivastaus, kommentti) 
+				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xs:element name="activityType" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Activity (valmistelun/toimenpide) status. 
-							- The type of action this activity presents. Currently can have only values "VALMISTELU" or "TOIMENPIDE".
+							- The type of action this activity describes. 
+							- In Aspa can have values: "VALMISTELU", "TOIMENPIDE", 
+							- In palautejarjestelma can have values: "SAATEVIESTI", "VASTAUS", "VÄLIVASTAUS" ja "KOMMENTTI".
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
@@ -283,12 +286,18 @@
 				</xs:element>	
 				<xs:element name="actor" type="types:PersonType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Tilaaja/Tuottaja</xs:documentation>
-					</xs:annotation>
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							- In Aspa: person who made the action (Tilaaja/Tuottaja)
+							- In palautejarjestelma: person who answered or commented
+						</xs:documentation>
+						</xs:annotation>
 				</xs:element>
 				<xs:element name="action" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Summary of the activity (Valmistelun tai toimenpiteen kuvaus)</xs:documentation>
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							- In Aspa: Summary of the activity (Valmistelun tai toimenpiteen kuvaus)
+							- In palautejarjestelma: Answer, comment, message (palautteen vastaus, välivastaus, kommentti, saateviesti)
+						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="activityTS" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -367,6 +376,7 @@
 					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Person who submitted the initiave (Palautteenantajan tiedot)</xs:documentation>
 					</xs:annotation>
 				</xs:element>
+				<xs:element name="activity" minOccurs="0" maxOccurs="unbounded" type="types:ActivityType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 				<xs:element name="attachmentRef" maxOccurs="unbounded" minOccurs="0" type="types:AttachmentReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Aloitteen liittyvä kuvan tai muun tiedoston URL - linkki. In Aspa-integration, this is not relevant.</xs:documentation>
@@ -437,7 +447,6 @@
 							</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="activity" minOccurs="0" maxOccurs="unbounded" type="types:ActivityType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 					</xs:sequence>
 				</xs:extension>
 			</xs:complexContent>
