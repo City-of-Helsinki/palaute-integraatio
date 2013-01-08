@@ -1,0 +1,551 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="http://hel.fi/schemas/palaute/ws/messages/v1" xmlns:sch1="http://hel.fi/schemas/palaute/ws/types/v1" xmlns:sch2="http://hel.fi/schemas/palaute/ws/types/external/v1" xmlns:sch3="http://hel.fi/schemas/palaute/ws/messages/types/v1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://hel.fi/schemas/palaute/ws/messages/v1" targetNamespace="http://hel.fi/schemas/palaute/ws/messages/v1">
+	<wsdl:types xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://hel.fi/schemas/palaute/ws/types/external/v1" xmlns:msg="http://hel.fi/schemas/palaute/ws/messages/v1" xmlns:msg-types="http://hel.fi/schemas/palaute/ws/messages/types/v1" xmlns:types="http://hel.fi/schemas/palaute/ws/types/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://hel.fi/schemas/palaute/ws/messages/v1">
+		<xs:import namespace="http://hel.fi/schemas/palaute/ws/types/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+		<xs:import namespace="http://hel.fi/schemas/palaute/ws/types/external/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+		<xs:import namespace="http://hel.fi/schemas/palaute/ws/messages/types/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			<xs:element name="PostInitiativeRequest" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					A message for posting new initiative to external system (Aspa). Typically it will be accepted and processed by
+					Aspa/palautejarjestelma, but it may fail, might be rejected (in both cases it
+					would result in msg-types:RequestStatusType response message) or it
+					mail crash with exception - reported via standard WS exception
+					mechanism</xs:documentation>
+				</xs:annotation>
+				<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:element name="initiative" minOccurs="1" type="ext:ExternalInitiativeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">New initiative posted from Palauteydin to external system (Aspa)</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PostInitiativeResponse" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					A response message to the PostInitiativeRequest, usually success
+				</xs:documentation>
+				</xs:annotation>
+				<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:element name="respStatus" type="msg-types:RequestStatusType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A response status to the PostInitiativeRequest
+						</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="initiative" minOccurs="0" type="ext:ExternalInitiativeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">New initiative stored to Aspa</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FetchNewInitiativesRequest" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					A method to retrieve all new or updated initiatives.
+
+					Each external system has the following (among other) attributes stored related to initiative:
+					- fetched by consumer ts (when was fetched by FetchNewInitiativesRequest)
+					- fetched by consumer (e.g. Palautejarjestelma called FetchNewInitiativesRequest)
+					- updated *to* consumer timestamp (when was update fetched last time by FetchNewInitiativesRequest)
+					- updated by consumer (Not applicable in Aspa-Palautejarjestelma integration. Any change, by e.g. PostInitiativeRequest)
+					- completed by consumer (Not applicable in Aspa-Palautejarjestelma integration. Only by PostInitiativeRequest when status is "complete")
+
+					If FetchNewInitiativesRequest completes successfully then:
+					- all new will be marked with "fetched by consumer ts" and "fetched by consumer" details
+					- all updated and already fetched (re-fetched) will be marked with "updated *to* consumer ts" datetime
+
+					At every moment external system knows when the initiative was "sent" to consumer first time (fetched) and when the updated details were sent to consumer (updated *to* consumer)
+
+					Consumer on it's side can see that if initiative (ExternalInitiativeType) has non-empty (not null) initiativeId
+					attribute then this initiative was already fetched and this is an updated information, since the data on external system (Aspa) has been changed since last fetch/update.
+					Then it's up to the consumer to locate it's object and update the data.
+
+				</xs:documentation>
+				</xs:annotation>
+				<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:element minOccurs="0" name="sinceDate" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional attribute, not used
+						</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="FetchNewInitiativesResponse" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A response message to the
+					FetchNewInitiativesRequest, usually success with the collection of ExternalInitiativeType objects
+				</xs:documentation>
+				</xs:annotation>
+				<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:element name="respStatus" type="msg-types:RequestStatusType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Operation status information</xs:documentation>
+							</xs:annotation>
+					</xs:element>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="initiative" type="ext:ExternalInitiativeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">New or updated initiatives</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ResetInitiativeReportsRequest" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:element minOccurs="0" name="sinceDate" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional attribute, not used</xs:documentation></xs:annotation>
+						</xs:element>
+					</xs:all>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ResetInitiativeReportsResponse" type="msg-types:RequestStatusType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			</xs:element>
+	</xs:schema>
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:types="http://hel.fi/schemas/palaute/ws/types/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://hel.fi/schemas/palaute/ws/types/v1">
+		<xs:complexType name="LocationType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Accurate location</xs:documentation>
+			</xs:annotation>
+			<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:element name="x" type="xs:double" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			<xs:element name="y" type="xs:double" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			<xs:element minOccurs="0" name="srs" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional SRS (epsx:xxx or just a name like
+					"helsinki")
+				</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			</xs:all>
+		</xs:complexType>
+		<xs:simpleType name="InitiativeTypeType">
+			<xs:restriction base="xs:string">
+			  <xs:enumeration value="THANK"/>
+			  <xs:enumeration value="BLAME"/>
+			  <xs:enumeration value="QUESTION"/>
+			  <xs:enumeration value="IDEA"/>
+			  <xs:enumeration value="OTHER"/>
+			</xs:restriction>
+		</xs:simpleType>	
+		<xs:simpleType name="ParameterDataType">
+			<xs:restriction base="xs:string">
+			  <xs:enumeration value="TEXT"/>
+			  <xs:enumeration value="CHECKBOX"/>
+			  <xs:enumeration value="MULTIVALUELIST"/>
+			</xs:restriction>
+		</xs:simpleType>
+		<xs:complexType name="ParameterType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative extra parameter (Palautejarjestelman palautteen lisatietokentta). Aspa-integraatiossa tällä kentällä ei ole käyttöä.
+			</xs:documentation>
+			</xs:annotation>
+			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element minOccurs="1" maxOccurs="unbounded" name="label" type="types:LabelIdType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				<xs:element minOccurs="1" maxOccurs="unbounded" name="valueType" type="types:ParameterDataType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				<xs:element minOccurs="1" maxOccurs="unbounded" name="value" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:complexType name="ParametersType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:sequence> 
+				<xs:element minOccurs="1" maxOccurs="unbounded" name="parameter" type="types:ParameterType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			</xs:sequence> 
+		</xs:complexType>
+		<xs:complexType name="LabelIdType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing label-id pair</xs:documentation>
+			</xs:annotation>
+			<xs:simpleContent>
+      				<xs:extension base="xs:string">
+					<xs:attribute name="level" type="xs:integer" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:attribute name="id" type="xs:string" use="optional" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			    	</xs:extension>
+    			</xs:simpleContent>
+		</xs:complexType>
+		<xs:complexType name="CategoryType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative label (Palautejarjestelman palautteen luokka ja Aspan aihe/tehtava)
+			</xs:documentation>
+			</xs:annotation>
+			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element minOccurs="1" maxOccurs="unbounded" name="label" type="types:LabelIdType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:complexType name="CategoriesType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:sequence> 
+				<xs:element minOccurs="1" maxOccurs="unbounded" name="category" type="types:CategoryType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			</xs:sequence> 
+		</xs:complexType>
+		<xs:complexType name="PersonType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing person details
+				</xs:documentation>
+				</xs:annotation>
+				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:element name="name" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element minOccurs="0" name="phone" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element minOccurs="0" name="email" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element minOccurs="0" name="contactAddress" type="types:AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				</xs:all>
+		</xs:complexType>
+		<xs:complexType name="AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing address details
+				</xs:documentation>
+				</xs:annotation>
+				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:element name="streetAddress" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element minOccurs="0" name="postalCode" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element minOccurs="0" name="postalOffice" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				</xs:all>
+		</xs:complexType>
+		<xs:complexType name="AttachmentReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Attachment (kuva tai muu liitetiedosto) object related to Palautejarjestelma or external system initiave (Aspa).
+			</xs:documentation>
+			</xs:annotation>
+			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element name="attachmentType" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">For example image/jpeg, text/html, text/plain</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="attachmentSize" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Attachment size in kilobytes</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="1" name="attachmentUri" type="xs:anyURI" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Toteutuksen kuvaus</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:complexType name="LocationReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Location reference (toimipisterekisterin yksikko). Not used in Aspa integration.
+			</xs:documentation>
+			</xs:annotation>
+			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element name="referenceType" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Supported location reference is currently only toimipisterekisteri. Not used in Aspa integration. </xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="1" name="referenceUri" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Actual reference which currently only can be toimipisterekisteri id</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:complexType name="ActivityType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Activity (valmistelu, toimenpide) object
+			</xs:documentation>
+			</xs:annotation>
+			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element name="activityType" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Activity (valmistelun/toimenpide) status. 
+							- The type of action this activity presents. Currently can have only values "VALMISTELU" or "TOIMENPIDE".
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="activityStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Activity (valmistelun/toimenpide) status. 
+							- Aspa toimenpide can have values "NEW", "IN_PROGRESS", "COMPLETED", "REJECTED"
+							- Aspa valmistelu can have values "5", "EI_KÄSITELTY", "EI_TOIMENPITEITÄ", "KIIREELLINEN". Not used in Aspa integration.
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>	
+				<xs:element name="actor" type="types:PersonType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Tilaaja/Tuottaja</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="action" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Summary of the activity (Valmistelun tai toimenpiteen kuvaus)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="activityTS" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Activity timestamp Pvm, klo - datetime as reported by the actor
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<xs:complexType name="InitiativeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative object (Palautejarjestelma palaute)
+			</xs:documentation>
+			</xs:annotation>
+			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element minOccurs="0" name="id" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative id in Palautejarjestelma. If fetched first time from Aspa, id element is not present.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="title" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Aloitteen otsikko</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="description" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Aloitteen sisältö</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="status" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative status (palautteen tila). It can have values "NEW", "IN_PROGRESS", "COMPLETED", "REJECTED"
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element maxOccurs="unbounded" name="type" type="types:InitiativeTypeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Aloitteen tyyppi. Aspa-integraatiossa aina BLAME</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="categories" type="types:CategoriesType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Luokat</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="parameters" type="types:ParametersType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Lisätiedot</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="address" type="types:AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				<xs:element minOccurs="0" name="location" type="types:LocationType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				<xs:element name="locationRef" maxOccurs="unbounded" minOccurs="0" type="types:LocationReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Aloitteen liittyvän toimipisteen id</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="handledBy" type="types:PersonType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Palautteenkäsittelijän tiedot</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="organisation" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Organisaatio, jonka työlistalla palaute on. Ei käyttöä Aspa-integraatiossa.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="reportedBy" type="types:PersonType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Palautteenantajan tiedot</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="attachmentRef" maxOccurs="unbounded" minOccurs="0" type="types:AttachmentReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Aloitteen liittyvä kuvan tai muun tiedoston URL - linkki. Ei käyttöä Aspa-integraatiossa.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="initiativeURL" type="xs:anyURI" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Aloitteen URL - linkki</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="reportedTS" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Pvm, klo - datetime as reported by the customer
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element name="createdTS" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Datetime as created in the system, might be
+					different than reportedTS
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="updatedTS" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Datetime as updated in the system, optional
+					</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:schema>
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://hel.fi/schemas/palaute/ws/types/external/v1" xmlns:types="http://hel.fi/schemas/palaute/ws/types/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://hel.fi/schemas/palaute/ws/types/external/v1">
+		<xs:import namespace="http://hel.fi/schemas/palaute/ws/types/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+		<xs:complexType name="ExternalInitiativeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type that represents enhanced initiative
+				model for the third-party systems data exchange. Basically it's an initiative with some standard third-party consumer details
+			</xs:documentation>
+			</xs:annotation>
+			<xs:complexContent xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:extension base="types:InitiativeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:element minOccurs="0" name="extObjectId" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional id assigned to this initiative by the
+								external system (e.g. Aspa ID)
+							</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element minOccurs="0" name="extObjectNumber" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">External identification which is public id to the initiave (Aspan palvelunumero tai Ahjo Diaari).  
+							</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element minOccurs="0" name="extObjectURL" type="xs:anyURI" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional ULR address assigned to this initiative by the
+								external system.
+							</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element minOccurs="0" name="extNotificationSet" type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">True, if Aspa sends e-mail notification to the requester when the initiave is solved. Default to False.
+							</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element minOccurs="0" maxOccurs="unbounded" name="activity" type="types:ActivityType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:schema>
+	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msg-types="http://hel.fi/schemas/palaute/ws/messages/types/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://hel.fi/schemas/palaute/ws/messages/types/v1">
+		<xs:simpleType name="StatusType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing possible status values
+			</xs:documentation>
+			</xs:annotation>
+			<xs:restriction base="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:enumeration value="SUCCESS" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				<xs:enumeration value="REJECTED" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				<xs:enumeration value="ERROR" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+			</xs:restriction>
+		</xs:simpleType>
+		<xs:complexType name="RequestStatusType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing request status message
+			</xs:documentation>
+			</xs:annotation>
+			<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element name="status" type="msg-types:StatusType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Status</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="message" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional message</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				<xs:element minOccurs="0" name="error" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional error message</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:all>
+		</xs:complexType>
+	</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="ResetInitiativeReportsResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:part element="tns:ResetInitiativeReportsResponse" name="ResetInitiativeReportsResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="FetchNewInitiativesRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:part element="tns:FetchNewInitiativesRequest" name="FetchNewInitiativesRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ResetInitiativeReportsRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:part element="tns:ResetInitiativeReportsRequest" name="ResetInitiativeReportsRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="FetchNewInitiativesResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:part element="tns:FetchNewInitiativesResponse" name="FetchNewInitiativesResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PostInitiativeResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:part element="tns:PostInitiativeResponse" name="PostInitiativeResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="PostInitiativeRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:part element="tns:PostInitiativeRequest" name="PostInitiativeRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="Palautejarjestelma" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:operation name="ResetInitiativeReports" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <wsdl:input message="tns:ResetInitiativeReportsRequest" name="ResetInitiativeReportsRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:input>
+      <wsdl:output message="tns:ResetInitiativeReportsResponse" name="ResetInitiativeReportsResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PostInitiative" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <wsdl:input message="tns:PostInitiativeRequest" name="PostInitiativeRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:input>
+      <wsdl:output message="tns:PostInitiativeResponse" name="PostInitiativeResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FetchNewInitiatives" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <wsdl:input message="tns:FetchNewInitiativesRequest" name="FetchNewInitiativesRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:input>
+      <wsdl:output message="tns:FetchNewInitiativesResponse" name="FetchNewInitiativesResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:output>
+    </wsdl:operation>   
+  </wsdl:portType>
+  <wsdl:binding name="PalautejarjestelmaSoap" type="tns:Palautejarjestelma" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+    <wsdl:operation name="ResetInitiativeReports" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <soap:operation soapAction="" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      <wsdl:input name="ResetInitiativeReportsRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:input>
+      <wsdl:output name="ResetInitiativeReportsResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PostInitiative" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <soap:operation soapAction="" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      <wsdl:input name="PostInitiativeRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:input>
+      <wsdl:output name="PostInitiativeResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="FetchNewInitiatives" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <soap:operation soapAction="" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      <wsdl:input name="FetchNewInitiativesRequest" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:input>
+      <wsdl:output name="FetchNewInitiativesResponse" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+        <soap:body use="literal" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="PalautejarjestelmaService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:port binding="tns:PalautejarjestelmaSoap" name="PalautejarjestelmaSoap" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      <soap:address location="http://helsinki.demo.keypro.fi:80/palautejarjestelma-ws/services/v1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
