@@ -192,7 +192,7 @@
 		</xs:complexType>
 		<xs:complexType name="PersonType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing person details
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing person details. Person can be citizen or public servant.
 				</xs:documentation>
 				</xs:annotation>
 				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
