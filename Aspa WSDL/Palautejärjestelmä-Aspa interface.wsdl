@@ -235,7 +235,7 @@
 					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Attachment size in kilobytes</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:elementname="attachmentUri" minOccurs="1" type="xs:anyURI" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element name="attachmentUri" minOccurs="1" type="xs:anyURI" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Toteutuksen kuvaus</xs:documentation>
 					</xs:annotation>
