@@ -352,7 +352,12 @@
 					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative extra parameters (Palautteen lisätiedot). In Aspa-integration, this is not relevant.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="address" minOccurs="0"  type="types:AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+				<xs:element name="address" minOccurs="0"  type="types:AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							Initiative address location (Aloitteen osoite). In Aspa-integration, this is only included by palautejarjestelma if the address has been fetched from the address from address master.
+						</xs:documentation>
+					</xs:annotation>
 				<xs:element name="location" minOccurs="0" type="types:LocationType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 				<xs:element name="locationRef" maxOccurs="unbounded" minOccurs="0" type="types:LocationReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
