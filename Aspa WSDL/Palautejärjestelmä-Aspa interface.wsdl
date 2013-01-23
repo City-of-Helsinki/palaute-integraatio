@@ -56,22 +56,21 @@
 					A method to retrieve all new or updated initiatives.
 
 					Each external system has the following (among other) attributes stored related to initiative:
-					- fetched by consumer ts (when was fetched by FetchNewInitiativesRequest)
+					- fetched by consumer timestamp (when was fetched by FetchNewInitiativesRequest)
 					- fetched by consumer (e.g. Palautejarjestelma called FetchNewInitiativesRequest)
 					- updated *to* consumer timestamp (when was update fetched last time by FetchNewInitiativesRequest)
 					- updated by consumer (Not applicable in Aspa-Palautejarjestelma integration. Any change, by e.g. PostInitiativeRequest)
 					- completed by consumer (Not applicable in Aspa-Palautejarjestelma integration. Only by PostInitiativeRequest when status is "complete")
 
 					If FetchNewInitiativesRequest completes successfully then:
-					- all new will be marked with "fetched by consumer ts" and "fetched by consumer" details
-					- all updated and already fetched (re-fetched) will be marked with "updated *to* consumer ts" datetime
+					- all new will be marked with "fetched by consumer timestamp" and "fetched by consumer" details
+					- all updated and already fetched (re-fetched) will be marked with "updated *to* consumer timestamp" datetime
 
 					At every moment external system knows when the initiative was "sent" to consumer first time (fetched) and when the updated details were sent to consumer (updated *to* consumer)
 
 					Consumer on it's side can see that if initiative (ExternalInitiativeType) has non-empty (not null) initiativeId
 					attribute then this initiative was already fetched and this is an updated information, since the data on external system (Aspa) has been changed since last fetch/update.
 					Then it's up to the consumer to locate it's object and update the data.
-
 				</xs:documentation>
 				</xs:annotation>
 				<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -155,7 +154,7 @@
 		</xs:simpleType>
 		<xs:complexType name="ParameterType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative extra parameter (Palautejarjestelman palautteen lisatietokentta). Aspa-integraatiossa tällä kentällä ei ole käyttöä.
+			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative extra parameter (Palautejarjestelman palautteen lisatietokentta). Not used in Aspa integration.
 			</xs:documentation>
 			</xs:annotation>
 			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -182,8 +181,14 @@
 		</xs:complexType>
 		<xs:complexType name="CategoryType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-			<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative label (Palautejarjestelman palautteen luokka ja Aspan aihe/tehtava)
-			</xs:documentation>
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					Initiative label (Palautejarjestelman palautteen luokka ja Aspan aihe/tehtava)
+					- category element contains list of categories as label elements with level attribute and optional id attribute
+					- level = 0 label has typically value "Helsingin kaupunki"
+					- level = 1 label has typically value "Rakennusvirasto" 
+					- level = 2 label is typically Aspa aihe
+					- level = 3 label is typically Aspa tehtävä 
+				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xs:element name="label" minOccurs="1" maxOccurs="unbounded" type="types:LabelIdType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
@@ -210,7 +215,7 @@
 		</xs:complexType>
 		<xs:complexType name="AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing address details
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">A simple type representing address details.
 					</xs:documentation>
 				</xs:annotation>
 				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -221,7 +226,8 @@
 		</xs:complexType>
 		<xs:complexType name="AttachmentReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Attachment (kuva tai muu liitetiedosto) object related to Palautejarjestelma or external system initiave (Aspa).
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					Attachment (kuva tai muu liitetiedosto) object related to Palautejarjestelma or external system initiave (Aspa). Not used in Aspa integration.
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -323,12 +329,12 @@
 				</xs:element>
 				<xs:element name="title" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative title (Aloitteen otsikko)</xs:documentation>
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative title (Palautteen otsikko)</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="description" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative description (Aloitteen sisältö)</xs:documentation>
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative description (Palautteen sisältö)</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="status" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -339,7 +345,7 @@
 				</xs:element>
 				<xs:element name="type" maxOccurs="unbounded" type="types:InitiativeTypeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative type (Aloitteen tyyppi). In Aspa-integration, this is always "BLAME"</xs:documentation>
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative type (Palautteen tyyppi). In Aspa-integration, this is always "BLAME"</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="categories" type="types:CategoriesType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -355,14 +361,14 @@
 				<xs:element name="address" minOccurs="0"  type="types:AddressType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							Initiative address location (Aloitteen osoite). In Aspa-integration, this is only included by palautejarjestelma if the address has been fetched from the address from address master.
+							Initiative address location (Palautteen osoite). In Aspa-integration, this is only included by palautejarjestelma if the address has been fetched from the address from address master.
 						</xs:documentation>
 					</xs:annotation>
 				<xs:element name="location" minOccurs="0" type="types:LocationType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 				<xs:element name="locationRef" maxOccurs="unbounded" minOccurs="0" type="types:LocationReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							Initiative location reference (Aloitteen toimipisteen id). In Aspa-integration, this is not relevant and only location (x,y) in Helsinki coordinate (ETRS-GK25) system is used. 
+							Initiative location reference (Palautteen toimipisteen id). In Aspa-integration, this is not relevant and only location (x,y) in Helsinki coordinate (ETRS-GK25) system is used. 
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
@@ -384,12 +390,12 @@
 				<xs:element name="activity" minOccurs="0" maxOccurs="unbounded" type="types:ActivityType" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 				<xs:element name="attachmentRef" maxOccurs="unbounded" minOccurs="0" type="types:AttachmentReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Aloitteen liittyvä kuvan tai muun tiedoston URL - linkki. In Aspa-integration, this is not relevant.</xs:documentation>
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Palautteen liittyvä kuvan tai muun tiedoston URL - linkki. In Aspa-integration, this is not relevant.</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="initiativeURL" type="xs:anyURI" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative URL in palautejarjestelma (Aloitteen URL - linkki palautejarjestelmassa).</xs:documentation>
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative URL in palautejarjestelma (Palautteen URL - linkki palautejarjestelmassa).</xs:documentation>
 					</xs:annotation>
 				</xs:element>
 				<xs:element name="reportedTS" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
