@@ -355,7 +355,7 @@
 					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative category (Palautteen luokka)</xs:documentation>
 					</xs:annotation>
 				</xs:element>
-				<xs:element name="parameters" type="types:ParametersType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element name="parameters"  minOccurs="0" type="types:ParametersType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Initiative extra parameters (Palautteen lisätiedot). In Aspa-integration, this is not relevant.</xs:documentation>
 					</xs:annotation>
