@@ -183,11 +183,13 @@
 			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					Initiative label (Palautejarjestelman palautteen luokka ja Aspan aihe/tehtava)
-					- category element contains list of categories as label elements with level attribute and optional id attribute
-					- level = 0 label has typically value "Helsingin kaupunki"
-					- level = 1 label has typically value "Rakennusvirasto" 
-					- level = 2 label is typically Aspa aihe
-					- level = 3 label is typically Aspa tehtävä 
+					 - category element contains list of categories as label elements with level attribute and optional id attribute
+					 - level = 0 label has typically value "Helsingin kaupunki"
+					 - level = 1 label has typically value "Rakennusvirasto" 
+					 - level = 2 label is typically Aspa aihe
+					 - level = 3 label is typically Aspa tehtävä
+					
+					 In Aspa integration, Aspa needs to go through all category values and try to find matching Aspa aihe/tehtava pair. If many matching pairs are found, the first one is selected.
 				</xs:documentation>
 			</xs:annotation>
 			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -435,8 +437,8 @@
 					<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
 						<xs:element name="extObjectId" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional id assigned to this initiative by the
-								external system (e.g. Aspa ID)
+							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+								Optional id assigned to this initiative by the external system (e.g. Aspa ID)
 							</xs:documentation>
 							</xs:annotation>
 						</xs:element>
@@ -500,7 +502,10 @@
 				<xs:element name="errorCode" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							Error code must be present in case of error. Possible values can be "INVALID_CATEGORY", "AUTHENTICATION_FAILED", "UNKNOWN_REASON".
+							Error code must be present in case of error. Possible values can be following
+							     - "INVALID_CATEGORY", if any of category values (CategoryType) cannot be mapped to a valid Aspa Aihe/Tehtava pair.
+							     - "AUTHENTICATION_FAILED", originating system (Palautejarjestelma) cannot be authenticated. 
+							     - "UNKNOWN_REASON", request failed for unknown reason.
 						</xs:documentation>
 					</xs:annotation>
 				</xs:element>
