@@ -67,22 +67,8 @@
 					- all updated and already fetched (re-fetched) will be marked with "updated *to* consumer timestamp" datetime
 
 					At every moment external system knows when the initiative was "sent" to consumer first time (fetched) and when the updated details were sent to consumer (updated *to* consumer)
-
-					Consumer on it's side can see that if initiative (ExternalInitiativeType) has non-empty (not null) initiativeId
-					attribute then this initiative was already fetched and this is an updated information, since the data on external system (Aspa) has been changed since last fetch/update.
-					Then it's up to the consumer to locate it's object and update the data.
 				</xs:documentation>
 				</xs:annotation>
-				<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
-				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:element name="sinceDate" minOccurs="0" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-						<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional attribute, not used
-						</xs:documentation>
-						</xs:annotation>
-					</xs:element>
-				</xs:all>
-				</xs:complexType>
 			</xs:element>
 			<xs:element name="FetchNewInitiativesResponse" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
