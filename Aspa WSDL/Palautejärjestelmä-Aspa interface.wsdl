@@ -109,8 +109,14 @@
 				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 				<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
-						<xs:element name="sinceDate" minOccurs="0" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema"><xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional attribute, not used</xs:documentation></xs:annotation>
+						<xs:element name="sinceDate" type="xs:dateTime" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+								<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+									sinceDate -element must be always present. This will reset Aspa to return in next FetchNewInitiativesRequest following initiatives from Aspa: 
+									- all initiatives which have been added to Aspa after the sinceDate date
+									- and all initiatives which have been at least once fetched to palautejarjestelma and which have been update after sinceDate date
+								</xs:documentation>
+							</xs:annotation>
 						</xs:element>
 					</xs:all>
 				</xs:complexType>
