@@ -177,9 +177,10 @@
 					Initiative label (Palautejarjestelman palautteen luokka ja Aspan aihe/tehtava)
 					 - category element contains list of categories as label elements with level attribute and optional id attribute
 					 - level = 0 label has typically value "Helsingin kaupunki"
-					 - level = 1 label has typically value "Rakennusvirasto" 
-					 - level = 2 label is typically Aspa aihe
-					 - level = 3 label is typically Aspa tehtävä
+					 - level = 1 label has typically value "Rakennusvirasto"
+					 - level = 2 label has typically value "Kunnossapidon luokat - Aspa" 
+					 - level = 3 label is typically Aspa aihe
+					 - level = 4 label is typically Aspa tehtävä
 					
 					 In Aspa integration, Aspa needs to go through all category values and try to find matching Aspa aihe/tehtava pair. If many matching pairs are found, the first one is selected.
 				</xs:documentation>
