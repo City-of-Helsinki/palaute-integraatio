@@ -271,7 +271,7 @@
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Activity (valmistelun/toimenpide) status. 
 							- The type of action this activity describes. 
-							- In Aspa can have values: "VALMISTELU", "TOIMENPIDE", 
+							- In Aspa can have values: "VALMISTELU", "TOTEUTUS", 
 							- In palautejarjestelma can have values: "SAATEVIESTI", "VASTAUS", "VÄLIVASTAUS" ja "KOMMENTTI".
 						</xs:documentation>
 					</xs:annotation>
