@@ -200,7 +200,7 @@
 				</xs:documentation>
 				</xs:annotation>
 				<xs:all xmlns:xs="http://www.w3.org/2001/XMLSchema">
-					<xs:element name="name" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+					<xs:element name="name" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 					<xs:element name="username" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 					<xs:element name="role" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
 					<xs:element name="phone" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
