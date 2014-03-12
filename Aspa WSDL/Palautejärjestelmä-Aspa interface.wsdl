@@ -419,6 +419,31 @@
 	</xs:schema>
 	<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ext="http://hel.fi/schemas/palaute/ws/types/external/v1" xmlns:types="http://hel.fi/schemas/palaute/ws/types/v1" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://hel.fi/schemas/palaute/ws/types/external/v1">
 		<xs:import namespace="http://hel.fi/schemas/palaute/ws/types/v1" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+		<xs:complexType name="ExternalReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">External reference for Aspa, Mobilenote and in the future this could be Ahjo or Pasi
+				</xs:documentation>
+			</xs:annotation>
+			<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:element name="extReferenceType" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						Can have values: ASPA_ID, ASPA_URL, ASPA_NUMBER, MOBILENOTE_ID  
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="reference" minOccurs="1" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Actual reference which currently only can be Aspa id, Aspa Url, Aspa number and Mobilenote id</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="referenceBase" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Reserved for e.g. Mobilenote base Url</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			</xs:sequence>
+		</xs:complexType>
 		<xs:complexType name="ExternalInitiativeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 			<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -428,24 +453,9 @@
 			<xs:complexContent xmlns:xs="http://www.w3.org/2001/XMLSchema">
 				<xs:extension base="types:InitiativeType" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
-						<xs:element name="extObjectId" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:element name="extReference" minOccurs="0" maxOccurs="unbounded" type="ext:ExternalReference" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-								Optional id assigned to this initiative by the external system (e.g. Aspa ID)
-							</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="extObjectNumber" minOccurs="0" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">External identification which is public id to the initiave (Aspan palvelunumero tai Ahjo Diaari).  
-							</xs:documentation>
-							</xs:annotation>
-						</xs:element>
-						<xs:element name="extObjectURL" minOccurs="0" type="xs:anyURI" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
-							<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Optional ULR address assigned to this initiative by the
-								external system.
-							</xs:documentation>
+								<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">External reference for Aspa or Mobilenote system (Aspa ID, Aspa Url, Mobilenote ID)</xs:documentation>
 							</xs:annotation>
 						</xs:element>
 						<xs:element name="extNotificationSet" minOccurs="0" type="xs:boolean" xmlns:xs="http://www.w3.org/2001/XMLSchema">
