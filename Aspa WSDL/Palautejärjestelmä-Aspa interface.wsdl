@@ -280,7 +280,7 @@
 				<xs:element name="activityStatus" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 					<xs:annotation xmlns:xs="http://www.w3.org/2001/XMLSchema">
 						<xs:documentation xmlns:xs="http://www.w3.org/2001/XMLSchema">Activity (valmistelun/toimenpide) status. 
-							- Aspa toimenpide can have values "NEW", "IN_PROGRESS", "COMPLETED", "REJECTED"
+							- Aspa toimenpide can have values "NEW", "IN_PROGRESS", "COMPLETED", "COMPLETED_SCHEDULED_LATER", "COMPLETED_REQUIRES_NO_ACTION", "INTERRUPTED"
 							- Aspa valmistelu can have values "5", "EI_KÄSITELTY", "EI_TOIMENPITEITÄ", "KIIREELLINEN". Not used in Aspa integration.
 						</xs:documentation>
 					</xs:annotation>
